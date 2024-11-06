@@ -1,45 +1,110 @@
 const myLibrary = [];
+const bookModal = document.getElementById("bookModal");
+const submitButton = document.getElementById("submit");
+const addBookButton = document.getElementById("addBook");
+const displayBooksButton = document.getElementById("displayBooks");
+const clearButton = document.getElementById("clear");
 
-let hobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-addBookToLibrary(hobbit);
-displayBooks();
+class Book {
+    constructor(title, author, pages, read) {
+        this.title = title;
+        this.author = author;
+        this.pages = pages;
+        this.read = read;
+    }
 
-function Book(title, author, pages, read)
-{
-    this.title = title;
-    this.author = author;
-    this.pages = pages;
-    this.read = read;
-    this.info = function()
-    {
-        return this.title + " by " + this.author + ", " + this.pages + " pages, " + (this.read ? "read" : "not read yet");
+    info() {
+        return `${this.title} by ${this.author}, ${this.pages} pages, ${this.read ? "read" : "not read yet"}`;
     }
 }
 
-function addBookToLibrary(book)
-{
-    myLibrary.push(book);
+// Event listeners
+bookModal.addEventListener("click", (event) => {
+    if (event.target === bookModal) closeModal();
+});
+
+submitButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    addBookToLibrary();
+});
+
+addBookButton.addEventListener("click", openModal);
+displayBooksButton.addEventListener("click", displayBooks);
+clearButton.addEventListener("click", clearView);
+
+function openModal() {
+    bookModal.style.display = "flex";
+    bookModal.style.justifyContent = "center";
+    bookModal.style.alignItems = "center";
 }
 
-function displayBooks()
-{
-    const table = document.getElementById("library").getElementsByTagName("tbody")[0];
+function closeModal() {
+    bookModal.style.display = "none";
+    document.getElementById("bookForm").reset();
+}
 
-    myLibrary.forEach(book => 
-    {
-        const newRow = table.insertRow();
+function addBookToLibrary() {
+    const title = document.getElementById("title").value;
+    const author = document.getElementById("author").value;
+    const pages = document.getElementById("pages").value;
+    const read = document.getElementById("read").checked;
 
-        const titleCell = newRow.insertCell(0);
-        const authorCell = newRow.insertCell(1);
-        const pagesCell = newRow.insertCell(2);
-        const readCell = newRow.insertCell(3);
+    const newBook = new Book(title, author, pages, read);
+    myLibrary.push(newBook);
 
-        titleCell.textContent = book.title;
-        authorCell.textContent = book.author;
-        pagesCell.textContent = book.pages;
-        readCell.textContent = book.read ? "Read" : "Not Read";
+    closeModal();
+    displayBooks();
+}
+
+function displayBooks() {
+    const tableBody = document.getElementById("library").querySelector("tbody");
+    tableBody.innerHTML = '';
+
+    myLibrary.forEach((book, index) => {
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.pages}</td>
+            <td><button class="read-button" data-index="${index}">Read</button></td>
+            <td><button class="delete-button" data-index="${index}">Delete</button></td>
+        `;
+    });
+
+    document.querySelectorAll(".delete-button").forEach(button => {
+        button.addEventListener("click", (event) => deleteBook(event.target.dataset.index));
+    });
+
+    document.querySelectorAll(".read-button").forEach(button => {
+        button.addEventListener("click", (event) => toggleRead(event.target.dataset.index));
     });
 }
 
+function deleteBook(index) {
+    myLibrary.splice(index, 1);
+    displayBooks();
+}
 
+function toggleRead(index) 
+{
+    const readButton = document.querySelector(`.read-button[data-index="${index}"]`);
 
+    console.log(index);
+
+    if (readButton.innerHTML === "Read") {
+        myLibrary[index].read = false;
+        readButton.innerHTML = "Not Read";
+        readButton.style.backgroundColor = "red";
+    }
+    else {
+        myLibrary[index].read = true;
+        readButton.innerHTML = "Read";
+        readButton.style.backgroundColor = "green";
+    }
+
+}
+
+function clearView() {
+    myLibrary.length = 0;
+    displayBooks();
+}

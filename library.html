@@ -7,6 +7,28 @@
     <link rel="stylesheet" href="library.css" type="text/css">
 </head>
 <body>
+    <h1>My Library</h1>
+    <div id="buttons">
+        <button id="addBook">New book</button>
+        <button id="displayBooks">Display books</button>
+        <button id="clear">Clear</button>
+    </div>
+    <div id="bookModal" class="modal">
+        <form id="bookForm">
+            <label for="title">Book Title:</label><br>
+            <input type="text" id="title" name="title" required><br><br>
+            <label for="author">Book Author:</label><br>
+            <input type="text" id="author" name="author" required><br><br>
+            <label for="pages">Number of Pages:</label><br>
+            <input type="number" id="pages" name="pages" required><br><br>
+            <label for="read">Read:</label><br>
+            <select id="read" name="read">
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+            </select><br><br>
+            <button id="submit" type="submit">Submit</button>
+        </form>
+    </div>
     <table id="library">
         <thead>
             <tr>
@@ -14,6 +36,7 @@
                 <th>Author</th>
                 <th>Pages</th>
                 <th>Read?</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
